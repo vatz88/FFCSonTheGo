@@ -247,5 +247,6 @@ function addTableDropdownButton(tableId) {
 }
 
 function updateTableDropdownLabel(tableId) {
-	$("#saved-tt-picker-label .btn-text").text("Table " + (tableId));		
+	var labelText = tableId ? "Table " + tableId : "Default";
+	$("#saved-tt-picker-label .btn-text").text(labelText);		
 }

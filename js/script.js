@@ -25,14 +25,13 @@ $(function () {
     });
 
     // load localForage data
-    // TODO: Populate dropdown with tables in storage.
     (function () {
         localforage.getItem('timeTableStorage').then(function (storedValue) {
             // Set the activeTable as the first table by default.
-            // TODO: Store and use the id of the table user last used.
             timeTableStorage = storedValue || timeTableStorage;
             activeTable = timeTableStorage[0];
             fillPage(activeTable.data);
+            updateTableDropdownLabel(0);
 
             timeTableStorage.slice(1).forEach(function(table) {
                 addTableDropdownButton(table.id);
