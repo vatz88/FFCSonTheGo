@@ -25,6 +25,7 @@ $(function () {
     });
 
     // load localForage data
+    // TODO: Populate dropdown with tables in storage.
     (function () {
         localforage.getItem('timeTableStorage').then(function (storedValue) {
             // Set the activeTable as the first table by default.
@@ -32,6 +33,10 @@ $(function () {
             timeTableStorage = storedValue || timeTableStorage;
             activeTable = timeTableStorage[0];
             fillPage(activeTable.data);
+
+            timeTableStorage.slice(1).forEach(function(table) {
+                addTableDropdownButton(table.id);
+            });
         });
     })();
 

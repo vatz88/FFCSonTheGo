@@ -74,10 +74,27 @@ $(function () {
 		// TODO: Clear existing content *
 		// TODO: Change activeTable *
 		var selectedTableId = Number.parseInt($(this).data("table-id"));
-		clearPage();
-		activeTable = timeTableStorage[selectedTableId];
-		fillPage(activeTable.data);
+		switchTable(selectedTableId);
 	});
+
+	// TODO*: Add new button in dropdown when user hits +.
+	// TODO*: Add new table in timeTableStorage when user hits +.
+	// TODO*: Update activeTable to point to newly created table.
+	// TODO*: Update label of the main button.
+	$("#saved-tt-picker-add").click(function (e) {
+		var newTableId = timeTableStorage.length;
+		timeTableStorage.push({
+			"id": newTableId,
+			data: []
+		});
+		
+		switchTable(newTableId);
+		
+		addTableDropdownButton(newTableId);
+		updateTableDropdownLabel(newTableId);
+	});
+
+	// TODO: Add an option to remove a table.
 });
 
 function addColorChangeEvents() {
@@ -201,6 +218,7 @@ function clearPage() {
 	updateCredits();
 }
 
+// Fills the page with the courses (array) passed.
 function fillPage(data) {
 	$.each(data, function (index, arr) {
 		var courseCode = arr[0];
@@ -210,12 +228,24 @@ function fillPage(data) {
 		var venue = arr[4];
 		var credits = arr[5];
 
-		activeTable.data = [];
-		activeTable.data.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
-
 		// index is basically courseId
 		addCourseToTimetable(index, courseCode, venue, slotArray);
 		insertCourseToCourseListTable(index, courseCode, courseTile, faculty, slotArray, venue, credits);
 	});
 	checkSlotClash();
+}
+
+function switchTable(tableId) {
+	clearPage();
+	activeTable = timeTableStorage[tableId];
+	fillPage(activeTable.data);
+	updateTableDropdownLabel(tableId);	
+}
+
+function addTableDropdownButton(tableId) {
+	$("#saved-tt-picker").append('<li><a href="#" data-table-id="' + tableId + '">Table ' + (tableId) + '</a></li>');	
+}
+
+function updateTableDropdownLabel(tableId) {
+	$("#saved-tt-picker-label .btn-text").text("Table " + (tableId));		
 }
