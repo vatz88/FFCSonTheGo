@@ -1,6 +1,12 @@
-var timeTableStorage = [];
+var timeTableStorage,
+	activeTable;
 
-allAddedCourses = [];
+timeTableStorage = [{
+	"id": 0,
+	data: []
+}];
+
+activeTable = timeTableStorage[0];
 
 $(function () {
 	addColorChangeEvents();
@@ -45,8 +51,8 @@ $(function () {
 		})();
 
 		// Add new course to the end of the array.
-		allAddedCourses.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
-		var courseId = allAddedCourses.length - 1;
+		activeTable.data.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
+		var courseId = activeTable.data.length - 1;
 
 		addCourseToTimetable(courseId, courseCode, venue, slotArray);
 		insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits);
@@ -55,20 +61,22 @@ $(function () {
 	});
 
 	$('#resetButton').click(function () {
-		$('#timetable .TimetableContent').removeClass("highlight clash");
-		$('.quick-selection *[class*="-tile"]').removeClass("highlight");
-		$('#slot-sel-area input').val("");
-		if ($('#timetable tr div[data-course]')) {
-			$('#timetable tr div[data-course]').remove();
-		}
-		if ($('#courseListTable tbody tr[data-course]')) {
-			$('#courseListTable tbody tr[data-course]').remove();
-		}
+		// TODO: Fix credits not resetting *
+		clearPage();
 
-		$('#insertCourseSelectionOptions').html("");
-
-		allAddedCourses = [];
+		activeTable.data = [];
 		updateLocalForage();
+	});
+
+	// TODO: Switch activeTable when user selects one from dropdown.
+	$("#saved-tt-picker").on("click", "a", function (e) {
+		e.preventDefault();
+		// TODO: Clear existing content *
+		// TODO: Change activeTable *
+		var selectedTableId = Number.parseInt($(this).data("table-id"));
+		clearPage();
+		activeTable = timeTableStorage[selectedTableId];
+		fillPage(activeTable.data);
 	});
 });
 
@@ -173,6 +181,41 @@ function removeCourse() {
 	checkSlotClash();
 	updateCredits();
 
-	allAddedCourses.splice(dataCourse, 1);
+	activeTable.data.splice(dataCourse, 1);
 	updateLocalForage();
+}
+
+// Simply clears all the added content in the page but doesn't reset the data in memory.
+function clearPage() {
+	$('#timetable .TimetableContent').removeClass("highlight clash");
+	$('.quick-selection *[class*="-tile"]').removeClass("highlight");
+	$('#slot-sel-area input').val("");
+	if ($('#timetable tr div[data-course]')) {
+		$('#timetable tr div[data-course]').remove();
+	}
+	if ($('#courseListTable tbody tr[data-course]')) {
+		$('#courseListTable tbody tr[data-course]').remove();
+	}
+
+	$('#insertCourseSelectionOptions').html("");
+	updateCredits();
+}
+
+function fillPage(data) {
+	$.each(data, function (index, arr) {
+		var courseCode = arr[0];
+		var courseTile = arr[1];
+		var faculty = arr[2];
+		var slotArray = arr[3];
+		var venue = arr[4];
+		var credits = arr[5];
+
+		activeTable.data = [];
+		activeTable.data.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
+
+		// index is basically courseId
+		addCourseToTimetable(index, courseCode, venue, slotArray);
+		insertCourseToCourseListTable(index, courseCode, courseTile, faculty, slotArray, venue, credits);
+	});
+	checkSlotClash();
 }

@@ -26,23 +26,12 @@ $(function () {
 
     // load localForage data
     (function () {
-        localforage.getItem('addedCourses').then(function (value) {
-            $.each(value, function (index, arr) {
-                var courseCode = arr[0];
-                var courseTile = arr[1];
-                var faculty = arr[2];
-                var slotArray = arr[3];
-                var venue = arr[4];
-                var credits = arr[5];
-
-                allAddedCourses = [];
-                allAddedCourses.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
-
-                // index is basically courseId
-                addCourseToTimetable(index, courseCode, venue, slotArray);
-                insertCourseToCourseListTable(index, courseCode, courseTile, faculty, slotArray, venue, credits);
-            });
-            checkSlotClash();
+        localforage.getItem('timeTableStorage').then(function (storedValue) {
+            // Set the activeTable as the first table by default.
+            // TODO: Store and use the id of the table user last used.
+            timeTableStorage = storedValue || timeTableStorage;
+            activeTable = timeTableStorage[0];
+            fillPage(activeTable.data);
         });
     })();
 
@@ -102,5 +91,5 @@ function removeTouchHoverCSSRule() {
 
 // save data through localForage before close
 function updateLocalForage() {
-    localforage.setItem('addedCourses', allAddedCourses);
+    localforage.setItem('timeTableStorage', timeTableStorage);
 }
