@@ -1,5 +1,6 @@
-allAddedCourses = {};
-courseCounter = 0; // use for unique data-course attribute
+var timeTableStorage = [];
+
+allAddedCourses = [];
 
 $(function () {
 	addColorChangeEvents();
@@ -43,12 +44,12 @@ $(function () {
 			return arr;
 		})();
 
-		courseCounter++;
-		// ('course' + courseCounter) will be unique class to div inserted in timetable and course list
-		allAddedCourses['course' + courseCounter] = [courseCode, courseTile, faculty, slotArray, venue, credits];
+		// Add new course to the end of the array.
+		allAddedCourses.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
+		var courseId = allAddedCourses.length - 1;
 
-		addCourseToTimetable(courseCode, venue, slotArray);
-		insertCourseToCourseListTable(courseCode, courseTile, faculty, slotArray, venue, credits);
+		addCourseToTimetable(courseId, courseCode, venue, slotArray);
+		insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits);
 		checkSlotClash();
 		updateLocalForage();
 	});
@@ -66,8 +67,7 @@ $(function () {
 
 		$('#insertCourseSelectionOptions').html("");
 
-		courseCounter = 0; // not really needed to be initialized again
-		allAddedCourses = {};
+		allAddedCourses = [];
 		updateLocalForage();
 	});
 });
@@ -98,9 +98,9 @@ function addColorChangeEvents() {
 	});
 }
 
-function addCourseToTimetable(courseCode, venue, slotArray) {
+function addCourseToTimetable(courseId, courseCode, venue, slotArray) {
 	slotArray.forEach(function (slot) {
-		var $divElement = $('<div data-course="' + 'course' + courseCounter + '">' + courseCode + '-' + venue + '</div>');
+		var $divElement = $('<div data-course="' + 'course' + courseId + '">' + courseCode + '-' + venue + '</div>');
 		$('#timetable tr .' + slot).addClass('highlight').append($divElement);
 		if ($(".quick-selection ." + slot + "-tile")) {
 			$(".quick-selection ." + slot + "-tile").addClass("highlight");
@@ -108,8 +108,8 @@ function addCourseToTimetable(courseCode, venue, slotArray) {
 	});
 }
 
-function insertCourseToCourseListTable(courseCode, courseTile, faculty, slotArray, venue, credits) {
-	var $trElement = $('<tr data-course="' + 'course' + courseCounter + '">' +
+function insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits) {
+	var $trElement = $('<tr data-course="' + 'course' + courseId + '">' +
 		'<td>' + slotArray.join('+') + '</td>' +
 		'<td>' + courseCode + '</td>' +
 		'<td>' + courseTile + '</td>' +
@@ -173,6 +173,6 @@ function removeCourse() {
 	checkSlotClash();
 	updateCredits();
 
-	delete allAddedCourses[dataCourse];
+	allAddedCourses.splice(dataCourse, 1);
 	updateLocalForage();
 }
