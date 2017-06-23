@@ -82,11 +82,15 @@ $(function () {
 
 	$("#saved-tt-picker-add").click(function (e) {
 		// TODO: Fix possible delete bug.
-		var newTableId = timeTableStorage.length;
+		// TODO*: Calculate id based on the id property of last table.
+		// TODO*: Bugfix - Update IndexedDB.
+		var newTableId = timeTableStorage[timeTableStorage.length - 1].id + 1;
 		timeTableStorage.push({
 			"id": newTableId,
 			data: []
 		});
+
+		updateLocalForage();
 		
 		switchTable(newTableId);
 		
@@ -95,6 +99,14 @@ $(function () {
 	});
 
 	// TODO: Add an option to remove a table.
+	$("#saved-tt-picker").on("click", ".tt-picker-remove", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var tableId = Number.parseInt($(this).closest("a").data("table-id"));
+		removeTable(tableId);
+		$(this).closest("li").remove();		
+	});
+
 });
 
 function addColorChangeEvents() {
@@ -244,14 +256,41 @@ function fillPage(data) {
 }
 
 function switchTable(tableId) {
+	for(index = 0; index < timeTableStorage.length; ++index) {
+		if(tableId == timeTableStorage[index].id)
+			break;
+	}
+
 	clearPage();
-	activeTable = timeTableStorage[tableId];
+	activeTable = timeTableStorage[index];
 	fillPage(activeTable.data);
 	updateTableDropdownLabel(tableId);	
 }
 
+function removeTable(tableId) {
+	for(var i = 0; i < timeTableStorage.length; ++i) {
+		if(timeTableStorage[i].id == tableId) {
+			// If it is the active table, change activeTable.
+			if(activeTable.id == tableId) {	
+				switchTable(timeTableStorage[i - 1].id);
+			}
+			
+			timeTableStorage.splice(i, 1);			
+			break;
+		}
+	}
+
+	updateLocalForage();
+}
+
 function addTableDropdownButton(tableId) {
-	$("#saved-tt-picker").append('<li><a href="#" data-table-id="' + tableId + '">Table ' + (tableId) + '</a></li>');	
+	$("#saved-tt-picker").append(
+		'<li>' + 
+			'<a href="#" data-table-id="' + tableId + '">Table ' + (tableId) +
+			'<button title="Remove" type="button" class="close tt-picker-remove" aria-label="Remove"><span aria-hidden="true">&times;</span></button>' +
+			'</a>' +
+		'</li>'
+	);	
 }
 
 function updateTableDropdownLabel(tableId) {
