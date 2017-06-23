@@ -26,24 +26,16 @@ $(function () {
 
     // load localForage data
     (function () {
-        localforage.getItem('addedCourses').then(function (value) {
-            if (value !== []) {
-                $.each(value, function (index, arr) {
-                    var courseCode = arr[0];
-                    var courseTile = arr[1];
-                    var faculty = arr[2];
-                    var slotArray = arr[3];
-                    var venue = arr[4];
-                    var credits = arr[5];
+        localforage.getItem('timeTableStorage').then(function (storedValue) {
+            // Set the activeTable as the first table by default.
+            timeTableStorage = storedValue || timeTableStorage;
+            activeTable = timeTableStorage[0];
+            fillPage(activeTable.data);
+            updateTableDropdownLabel(0);
 
-                    courseCounter++;
-                    allAddedCourses['course' + courseCounter] = [courseCode, courseTile, faculty, slotArray, venue, credits];
-
-                    addCourseToTimetable(courseCode, venue, slotArray);
-                    insertCourseToCourseListTable(courseCode, courseTile, faculty, slotArray, venue, credits);
-                });
-                checkSlotClash();
-            }
+            timeTableStorage.slice(1).forEach(function(table) {
+                addTableDropdownButton(table.id);
+            });
         });
     })();
 
@@ -103,11 +95,5 @@ function removeTouchHoverCSSRule() {
 
 // save data through localForage before close
 function updateLocalForage() {
-    var courses = [];
-
-    $.each(allAddedCourses, function (key, value) {
-        courses.push(value);
-    });
-
-    localforage.setItem('addedCourses', courses);
+    localforage.setItem('timeTableStorage', timeTableStorage);
 }

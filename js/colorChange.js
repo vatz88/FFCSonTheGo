@@ -1,5 +1,12 @@
-allAddedCourses = {};
-courseCounter = 0; // use for unique data-course attribute
+var timeTableStorage,
+	activeTable;
+
+timeTableStorage = [{
+	"id": 0,
+	data: []
+}];
+
+activeTable = timeTableStorage[0];
 
 $(function () {
 	addColorChangeEvents();
@@ -43,33 +50,63 @@ $(function () {
 			return arr;
 		})();
 
-		courseCounter++;
-		// ('course' + courseCounter) will be unique class to div inserted in timetable and course list
-		allAddedCourses['course' + courseCounter] = [courseCode, courseTile, faculty, slotArray, venue, credits];
+		// Add new course to the end of the array.
+		var courseId;
+		if(!activeTable.data.length)
+			courseId = 0;
+		else {
+			var lastAddedCourse = activeTable.data[activeTable.data.length - 1];
+			courseId = lastAddedCourse[0] + 1;
+		}
 
-		addCourseToTimetable(courseCode, venue, slotArray);
-		insertCourseToCourseListTable(courseCode, courseTile, faculty, slotArray, venue, credits);
+		activeTable.data.push([courseId, courseCode, courseTile, faculty, slotArray, venue, credits]);
+
+		addCourseToTimetable(courseId, courseCode, venue, slotArray);
+		insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits);
 		checkSlotClash();
 		updateLocalForage();
 	});
 
 	$('#resetButton').click(function () {
-		$('#timetable .TimetableContent').removeClass("highlight clash");
-		$('.quick-selection *[class*="-tile"]').removeClass("highlight");
-		$('#slot-sel-area input').val("");
-		if ($('#timetable tr div[data-course]')) {
-			$('#timetable tr div[data-course]').remove();
-		}
-		if ($('#courseListTable tbody tr[data-course]')) {
-			$('#courseListTable tbody tr[data-course]').remove();
-		}
+		clearPage();
 
-		$('#insertCourseSelectionOptions').html("");
-
-		courseCounter = 0; // not really needed to be initialized again
-		allAddedCourses = {};
+		activeTable.data = [];
 		updateLocalForage();
 	});
+
+	$("#saved-tt-picker").on("click", "a", function (e) {
+		e.preventDefault();
+		var selectedTableId = Number.parseInt($(this).data("table-id"));
+		switchTable(selectedTableId);
+	});
+
+	$("#saved-tt-picker-add").click(function (e) {
+		// TODO: Fix possible delete bug.
+		// TODO*: Calculate id based on the id property of last table.
+		// TODO*: Bugfix - Update IndexedDB.
+		var newTableId = timeTableStorage[timeTableStorage.length - 1].id + 1;
+		timeTableStorage.push({
+			"id": newTableId,
+			data: []
+		});
+
+		updateLocalForage();
+		
+		switchTable(newTableId);
+		
+		addTableDropdownButton(newTableId);
+		updateTableDropdownLabel(newTableId);
+	});
+
+	// TODO: Add an option to remove a table.
+	$("#saved-tt-picker").on("click", ".tt-picker-remove", function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var tableId = Number.parseInt($(this).closest("a").data("table-id"));
+		removeTable(tableId);
+		$(this).closest("li").remove();		
+	});
+
 });
 
 function addColorChangeEvents() {
@@ -98,9 +135,9 @@ function addColorChangeEvents() {
 	});
 }
 
-function addCourseToTimetable(courseCode, venue, slotArray) {
+function addCourseToTimetable(courseId, courseCode, venue, slotArray) {
 	slotArray.forEach(function (slot) {
-		var $divElement = $('<div data-course="' + 'course' + courseCounter + '">' + courseCode + '-' + venue + '</div>');
+		var $divElement = $('<div data-course="' + 'course' + courseId + '">' + courseCode + '-' + venue + '</div>');
 		$('#timetable tr .' + slot).addClass('highlight').append($divElement);
 		if ($(".quick-selection ." + slot + "-tile")) {
 			$(".quick-selection ." + slot + "-tile").addClass("highlight");
@@ -108,8 +145,8 @@ function addCourseToTimetable(courseCode, venue, slotArray) {
 	});
 }
 
-function insertCourseToCourseListTable(courseCode, courseTile, faculty, slotArray, venue, credits) {
-	var $trElement = $('<tr data-course="' + 'course' + courseCounter + '">' +
+function insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits) {
+	var $trElement = $('<tr data-course="' + 'course' + courseId + '">' +
 		'<td>' + slotArray.join('+') + '</td>' +
 		'<td>' + courseCode + '</td>' +
 		'<td>' + courseTile + '</td>' +
@@ -173,6 +210,90 @@ function removeCourse() {
 	checkSlotClash();
 	updateCredits();
 
-	delete allAddedCourses[dataCourse];
+	var courseId = Number.parseInt(dataCourse.substr(-1));
+	for(var i = 0; i < activeTable.data.length; ++i) {
+		if(activeTable.data[i][0] == courseId) {
+			activeTable.data.splice(i, 1);
+			break;
+		}
+	}
+
 	updateLocalForage();
+}
+
+// Simply clears all the added content in the page but doesn't reset the data in memory.
+function clearPage() {
+	$('#timetable .TimetableContent').removeClass("highlight clash");
+	$('.quick-selection *[class*="-tile"]').removeClass("highlight");
+	$('#slot-sel-area input').val("");
+	if ($('#timetable tr div[data-course]')) {
+		$('#timetable tr div[data-course]').remove();
+	}
+	if ($('#courseListTable tbody tr[data-course]')) {
+		$('#courseListTable tbody tr[data-course]').remove();
+	}
+
+	$('#insertCourseSelectionOptions').html("");
+	updateCredits();
+}
+
+// Fills the page with the courses (array) passed.
+function fillPage(data) {
+	$.each(data, function (index, arr) {
+		var courseId = arr[0];
+		var courseCode = arr[1];
+		var courseTile = arr[2];
+		var faculty = arr[3];
+		var slotArray = arr[4];
+		var venue = arr[5];
+		var credits = arr[6];
+
+		// index is basically courseId
+		addCourseToTimetable(courseId, courseCode, venue, slotArray);
+		insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits);
+	});
+	checkSlotClash();
+}
+
+function switchTable(tableId) {
+	for(index = 0; index < timeTableStorage.length; ++index) {
+		if(tableId == timeTableStorage[index].id)
+			break;
+	}
+
+	clearPage();
+	activeTable = timeTableStorage[index];
+	fillPage(activeTable.data);
+	updateTableDropdownLabel(tableId);	
+}
+
+function removeTable(tableId) {
+	for(var i = 0; i < timeTableStorage.length; ++i) {
+		if(timeTableStorage[i].id == tableId) {
+			// If it is the active table, change activeTable.
+			if(activeTable.id == tableId) {	
+				switchTable(timeTableStorage[i - 1].id);
+			}
+			
+			timeTableStorage.splice(i, 1);			
+			break;
+		}
+	}
+
+	updateLocalForage();
+}
+
+function addTableDropdownButton(tableId) {
+	$("#saved-tt-picker").append(
+		'<li>' + 
+			'<a href="#" data-table-id="' + tableId + '">Table ' + (tableId) +
+			'<button title="Remove" type="button" class="close tt-picker-remove" aria-label="Remove"><span aria-hidden="true">&times;</span></button>' +
+			'</a>' +
+		'</li>'
+	);	
+}
+
+function updateTableDropdownLabel(tableId) {
+	var labelText = tableId ? "Table " + tableId : "Default";
+	$("#saved-tt-picker-label .btn-text").text(labelText);		
 }
