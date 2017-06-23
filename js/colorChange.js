@@ -51,8 +51,15 @@ $(function () {
 		})();
 
 		// Add new course to the end of the array.
-		activeTable.data.push([courseCode, courseTile, faculty, slotArray, venue, credits]);
-		var courseId = activeTable.data.length - 1;
+		var courseId;
+		if(!activeTable.data.length)
+			courseId = 0;
+		else {
+			var lastAddedCourse = activeTable.data[activeTable.data.length - 1];
+			courseId = lastAddedCourse[0] + 1;
+		}
+
+		activeTable.data.push([courseId, courseCode, courseTile, faculty, slotArray, venue, credits]);
 
 		addCourseToTimetable(courseId, courseCode, venue, slotArray);
 		insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits);
@@ -61,27 +68,20 @@ $(function () {
 	});
 
 	$('#resetButton').click(function () {
-		// TODO: Fix credits not resetting *
 		clearPage();
 
 		activeTable.data = [];
 		updateLocalForage();
 	});
 
-	// TODO: Switch activeTable when user selects one from dropdown.
 	$("#saved-tt-picker").on("click", "a", function (e) {
 		e.preventDefault();
-		// TODO: Clear existing content *
-		// TODO: Change activeTable *
 		var selectedTableId = Number.parseInt($(this).data("table-id"));
 		switchTable(selectedTableId);
 	});
 
-	// TODO*: Add new button in dropdown when user hits +.
-	// TODO*: Add new table in timeTableStorage when user hits +.
-	// TODO*: Update activeTable to point to newly created table.
-	// TODO*: Update label of the main button.
 	$("#saved-tt-picker-add").click(function (e) {
+		// TODO: Fix possible delete bug.
 		var newTableId = timeTableStorage.length;
 		timeTableStorage.push({
 			"id": newTableId,
@@ -198,7 +198,14 @@ function removeCourse() {
 	checkSlotClash();
 	updateCredits();
 
-	activeTable.data.splice(dataCourse, 1);
+	var courseId = Number.parseInt(dataCourse.substr(-1));
+	for(var i = 0; i < activeTable.data.length; ++i) {
+		if(activeTable.data[i][0] == courseId) {
+			activeTable.data.splice(i, 1);
+			break;
+		}
+	}
+
 	updateLocalForage();
 }
 
@@ -221,16 +228,17 @@ function clearPage() {
 // Fills the page with the courses (array) passed.
 function fillPage(data) {
 	$.each(data, function (index, arr) {
-		var courseCode = arr[0];
-		var courseTile = arr[1];
-		var faculty = arr[2];
-		var slotArray = arr[3];
-		var venue = arr[4];
-		var credits = arr[5];
+		var courseId = arr[0];
+		var courseCode = arr[1];
+		var courseTile = arr[2];
+		var faculty = arr[3];
+		var slotArray = arr[4];
+		var venue = arr[5];
+		var credits = arr[6];
 
 		// index is basically courseId
-		addCourseToTimetable(index, courseCode, venue, slotArray);
-		insertCourseToCourseListTable(index, courseCode, courseTile, faculty, slotArray, venue, credits);
+		addCourseToTimetable(courseId, courseCode, venue, slotArray);
+		insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty, slotArray, venue, credits);
 	});
 	checkSlotClash();
 }
