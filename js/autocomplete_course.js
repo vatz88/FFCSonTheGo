@@ -1,4 +1,6 @@
-$(function () {
+function initAutocomplete(allData, uniqueData) {
+    unique_courses = uniqueData;
+    all_data = allData;
     // autocomplete options
     var courseCodeOption = {
         data: unique_courses,
@@ -87,7 +89,7 @@ $(function () {
             $(this).blur();
         }
     });
-});
+}
 
 // Add slot selection buttons from array of slots
 function getSlotSelectionButton(code, title, type, slot, faculty, credits, venue) {
