@@ -1,4 +1,6 @@
 $(function () {
+    // Disclaimer modal config.
+    $("#disclaimer-modal").modal();
 
     removeTouchHoverCSSRule();
 
