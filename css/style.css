@@ -523,6 +523,14 @@ footer {
   text-align: center;
 }
 
+#courseListTable table tr th {
+  cursor: pointer;
+}
+
+#courseListTable table tr th.sorted {
+  background-color: #f1f7ee;
+}
+
 #courseListTable table tr:not(:last-of-type) {
   cursor: pointer;
 }
@@ -588,7 +596,7 @@ footer a:hover {
 
 
 /**
- * Custom scrollbar 
+ * Custom scrollbar
  */
 
 ::-webkit-scrollbar {

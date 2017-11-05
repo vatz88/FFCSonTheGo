@@ -147,6 +147,57 @@ $(function () {
 	// delete course from table
 	$("#courseListTable table").on("click", ".close", removeCourse);
 
+  $("#courseListTable table").on("click", "th", function () {
+    var $this = $(this);
+    var isSorted = false;
+
+    // check if the column is already sorted
+    if ($this.hasClass('sorted')) {
+      isSorted = true;
+    }
+
+    $("#courseListTable table th.sorted").removeClass('sorted');
+    $this.addClass('sorted');
+
+    var items = retrieveColumnItems($this);
+    var ascending = false;
+
+    // check if the column is sorted in ascending order
+    if (isSorted) {
+      for (var i = 0; i < items.length; i++) {
+        var current = $(items[i]).text();
+        var next = $(items[i + 1]).text();
+
+        if (current < next) {
+          ascending = true;
+          break;
+        }
+      }
+    }
+
+    // if sorted in ascending order
+    if (isSorted && ascending) {
+      // sort in descending order
+      items.sort(function (a, b) {
+        return $(a).text() < $(b).text();
+      });
+    } else {
+      // sort in ascending order
+      items.sort(function (a, b) {
+        return $(a).text() > $(b).text();
+      });
+    }
+
+    // get the corresponding rows of the sorted column items
+    var sortedCourseRows = $(items).map(function (i, item) {
+      return $(item).parent().get();
+    });
+
+    // rerender the rows
+    $("#courseListTable table tbody tr").not("tr:last").remove();
+    $('#courseListTable tbody #totalCreditsTr').before(sortedCourseRows);
+	});
+
 	// Reset current table not all tables
 	$('#resetButton').click(function () {
 		clearPage();
@@ -289,10 +340,51 @@ function insertCourseToCourseListTable(courseId, courseCode, courseTile, faculty
 		'<td><span class="close">&times;</span></td>' +
 		'</tr>');
 
-	$('#courseListTable tbody #totalCreditsTr').before($trElement);
+  var previousRow = $('#courseListTable tbody #totalCreditsTr');
+  var sortedColumn = $("#courseListTable table th.sorted")[0];
+
+  // if any column is sorted, find the position of this course
+  if (sortedColumn) {
+    var index = getColumnIndex(sortedColumn);
+    var items = retrieveColumnItems(sortedColumn)
+    var currentElement = $trElement.find('td')[index];
+
+    // a variation of insertion sort
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+
+      if ($(currentElement).text() <= $(item).text()) {
+        previousRow = $(item).parent();
+        break;
+      }
+    }
+  }
+
+  previousRow.before($trElement);
 
 	// update credits
 	updateCredits();
+}
+
+function getColumnIndex(column) {
+  var columns = ['Slot', 'Code', 'Title', 'Faculty', 'Venue', 'Credits'];
+  var columnText = $(column).text();
+  var index = columns.indexOf(columnText);
+
+  return index;
+}
+
+function retrieveColumnItems(column) {
+  var index = getColumnIndex(column);
+
+  var courseRows = $("#courseListTable table tbody").find("tr");
+  courseRows = courseRows.slice(0, -1);
+
+  var items = $(courseRows).map(function (i, row) {
+    return $(row).find("td")[index];
+  });
+
+  return items;
 }
 
 function updateCredits() {
