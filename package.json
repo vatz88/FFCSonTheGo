@@ -1,4 +1,5 @@
-{
+{   
+    "_comment": "so here the code goes..."
     "name": "FFCSonTheGo",
     "version": "1.0.0",
     "main": "index.js",
@@ -7,6 +8,7 @@
     "license": "GPL-3.0",
     "private": false,
     "scripts": {
+        "_comment": "and the comment of my mind palace goes there"
         "start": "yarn convert && parcel src/index.html",
         "start:noconvert": "parcel src/index.html",
         "build": "yarn convert && parcel build src/index.html",
