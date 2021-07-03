@@ -1,8 +1,13 @@
 import $ from 'jquery';
 
 export let filterSlotArr = [];
-export function resetFilterSlotArr(params) {
+export function resetFilterSlotArr() {
     filterSlotArr = [];
+}
+
+export let filterVenueArr = [];
+export function resetFilterVenueArr() {
+    filterVenueArr = [];
 }
 
 const courses_data = {
@@ -10,7 +15,7 @@ const courses_data = {
     all_data: [],
 };
 
-var multiselectConfig = {
+var multiselectSlotConfig = {
     enableCaseInsensitiveFiltering: true,
     delimiterText: '; ',
     enableClickableOptGroups: true,
@@ -82,6 +87,78 @@ var multiselectConfig = {
     },
 };
 
+var multiselectVenueConfig = {
+    enableCaseInsensitiveFiltering: true,
+    delimiterText: '; ',
+    enableClickableOptGroups: true,
+    disableIfEmpty: true,
+    disabledText: 'Apply Venue Filter',
+    buttonWidth: '100%',
+    maxHeight: 200,
+    onChange: function(option, checked) {
+        if (checked) {
+            for (var key = 0; key < option.length; key++) {
+                if (option[key.toString()].value) {
+                    filterVenueArr.indexOf(option[key.toString()].value) ===
+                        -1 && filterVenueArr.push(option[key.toString()].value);
+                } else {
+                    var allSelectOption = option[key.toString()];
+                    for (
+                        var innerkey = 0;
+                        innerkey < allSelectOption.length;
+                        innerkey++
+                    ) {
+                        if (allSelectOption[innerkey.toString()].value) {
+                            filterVenueArr.indexOf(
+                                allSelectOption[innerkey.toString()].value,
+                            ) === -1 &&
+                                filterVenueArr.push(
+                                    allSelectOption[innerkey.toString()].value,
+                                );
+                        }
+                    }
+                }
+            }
+        } else {
+            for (var key = 0; key < option.length; key++) {
+                if (option[key.toString()].value) {
+                    var filterSlotIndex = filterVenueArr.indexOf(
+                        option[key.toString()].value,
+                    );
+                    filterVenueArr.splice(filterSlotIndex, 1);
+                } else {
+                    var allSelectOption = option[key.toString()];
+                    for (
+                        var innerkey = 0;
+                        innerkey < allSelectOption.length;
+                        innerkey++
+                    ) {
+                        if (allSelectOption[innerkey.toString()].value) {
+                            var filterSlotIndex = filterVenueArr.indexOf(
+                                allSelectOption[innerkey.toString()].value,
+                            );
+                            filterVenueArr.splice(filterSlotIndex, 1);
+                        }
+                    }
+                }
+            }
+        }
+        $('#insertCourseSelectionOptions button').show();
+        if (filterVenueArr.length) {
+            $('#insertCourseSelectionOptions button')
+                .not(function(i, el) {
+                    var elVenue = $(el).data('venue');
+                    if (filterVenueArr.indexOf(elVenue) > -1) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                })
+                .hide();
+        }
+    },
+};
+
 export function initAutocomplete(isChennai) {
     if (isChennai) {
         courses_data.all_data = require('../data/all_data_chennai.json');
@@ -112,7 +189,7 @@ export function initAutocomplete(isChennai) {
                 $('#inputCourse')
                     .val(code + ' - ' + title)
                     .trigger('change');
-                addSlotButtons(code);
+                addFilterButtons(code);
             },
         },
     };
@@ -148,7 +225,8 @@ export function postInitAutocomplete() {
     });
 
     // Init Multiselect
-    $('#filter-by-slot').multiselect(multiselectConfig);
+    $('#filter-by-slot').multiselect(multiselectSlotConfig);
+    $('#filter-by-venue').multiselect(multiselectVenueConfig);
 }
 
 // Add slot selection buttons from array of slots
@@ -183,7 +261,7 @@ function getSlotSelectionButton(
     return $slotButton;
 }
 
-function addSlotButtons(code) {
+function addFilterButtons(code) {
     var BUTTONS_PER_DIV = 4;
 
     var buttonsPerDiv = BUTTONS_PER_DIV;
@@ -192,9 +270,14 @@ function addSlotButtons(code) {
     $('#insertCourseSelectionOptions').append($buttonDiv);
 
     $('#filter-by-slot').html('');
+    $('#filter-by-venue').html('');
+
     resetFilterSlotArr();
+    resetFilterVenueArr();
+
     var theorySlotGroupSelect = [];
     var labSlotGroupSelect = [];
+    var venueGroupSelect = [];
 
     $.each(courses_data.all_data, function(key, value) {
         if (value.CODE === code) {
@@ -211,13 +294,26 @@ function addSlotButtons(code) {
 
             // Build Multiselect group list
             if (value.SLOT[0] === 'L') {
-                if (labSlotGroupSelect.indexOf(value.SLOT) === -1) {
+                if (
+                    typeof value.SLOT != 'undefined' &&
+                    labSlotGroupSelect.indexOf(value.SLOT) === -1
+                ) {
                     labSlotGroupSelect.push(value.SLOT);
                 }
             } else {
-                if (theorySlotGroupSelect.indexOf(value.SLOT) === -1) {
+                if (
+                    typeof value.SLOT != 'undefined' &&
+                    theorySlotGroupSelect.indexOf(value.SLOT) === -1
+                ) {
                     theorySlotGroupSelect.push(value.SLOT);
                 }
+            }
+
+            if (
+                typeof value.VENUE != 'undefined' &&
+                venueGroupSelect.indexOf(value.VENUE) === -1
+            ) {
+                venueGroupSelect.push(value.VENUE);
             }
 
             buttonsPerDiv--;
@@ -239,8 +335,9 @@ function addSlotButtons(code) {
         });
         $('#filter-by-slot').append($theorySlotGroupSelect);
     }
+
+    // Multiselect Lab
     if (labSlotGroupSelect.length) {
-        // Multiselect Lab
         var $labSlotGroupSelect = $('<optgroup label="Lab"></optgroup>');
         labSlotGroupSelect.forEach(function(el) {
             var $option = $('<option value="' + el + '">' + el + '</option>');
@@ -248,5 +345,16 @@ function addSlotButtons(code) {
         });
         $('#filter-by-slot').append($labSlotGroupSelect);
     }
+
+    // Multiselect Venue
+    if (venueGroupSelect.length) {
+        var $venueGroupSelect = $('#filter-by-venue');
+        venueGroupSelect.forEach(function(el) {
+            var $option = $('<option value="' + el + '">' + el + '</option>');
+            $venueGroupSelect.append($option);
+        });
+    }
+
     $('#filter-by-slot').multiselect('rebuild');
+    $('#filter-by-venue').multiselect('rebuild');
 }

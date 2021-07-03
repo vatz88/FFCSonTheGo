@@ -305,22 +305,34 @@ $(function() {
         activeTable.data = [];
         updateLocalForage();
         highlighted[activeTable.id] = [];
+
         // Clear Multiselect
         $('#filter-by-slot').html('');
         resetFilterSlotArr();
         $('#filter-by-slot').multiselect &&
             $('#filter-by-slot').multiselect('rebuild');
+
+        $('#filter-by-venue').html('');
+        resetFilterSlotArr();
+        $('#filter-by-venue').multiselect &&
+            $('#filter-by-venue').multiselect('rebuild');
     });
 
     // Clear course from panel
     $('#clearCourseBtn').click(function() {
         $('#slot-sel-area input').val('');
         $('#insertCourseSelectionOptions').html('');
+
         // Clear Multiselect
         $('#filter-by-slot').html('');
         resetFilterSlotArr();
         $('#filter-by-slot').multiselect &&
             $('#filter-by-slot').multiselect('rebuild');
+
+        $('#filter-by-venue').html('');
+        resetFilterSlotArr();
+        $('#filter-by-venue').multiselect &&
+            $('#filter-by-venue').multiselect('rebuild');
     });
 
     // switch table menu option on click
