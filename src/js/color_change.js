@@ -436,64 +436,51 @@ $(function() {
 
     $('#courseListTable th')
         .not(':last')
-        .click(function() {
-            var $this = $(this);
-            var isSorted = false;
+        .on('click', function() {
+            var isAscending = false,
+                isDescending = false;
+            var $items = retrieveColumnItems($(this));
 
-            // check if the column is already sorted
-            if ($this.hasClass('sorted')) {
-                isSorted = true;
+            if ($(this).hasClass('ascending')) {
+                isAscending = true;
+            } else if ($(this).hasClass('descending')) {
+                isDescending = true;
             }
 
-            $('#courseListTable th.sorted').removeClass(
-                'sorted ascending descending',
-            );
+            $('#courseListTable th').removeClass('ascending descending');
 
-            var items = retrieveColumnItems($this);
-            var ascending = false;
-
-            // check if the column is sorted in ascending order
-            if (isSorted) {
-                for (var i = 0; i < items.length; i++) {
-                    var current = $(items[i]).text();
-                    var next = $(items[i + 1]).text();
-
-                    if (current < next) {
-                        ascending = true;
-                        break;
-                    }
-                }
-            }
-
-            // if sorted in ascending order
-            if (isSorted && ascending) {
-                // sort in descending order
-                items.sort(function(a, b) {
-                    return $(a).text() < $(b).text() ? 1 : -1;
-                });
-                $this.addClass('sorted descending');
-            } else {
-                // sort in ascending order
-                items.sort(function(a, b) {
+            // Sort the course list in ascending, descending or the default order
+            if (!isAscending && !isDescending) {
+                $items.sort(function(a, b) {
                     return $(a).text() > $(b).text() ? 1 : -1;
                 });
-                $this.addClass('sorted ascending');
+
+                $(this).addClass('ascending');
+            } else if (isAscending && !isDescending) {
+                $items.sort(function(a, b) {
+                    return $(a).text() < $(b).text() ? 1 : -1;
+                });
+
+                $(this).addClass('descending');
+            } else {
+                $items.sort(function(a, b) {
+                    return $(a)
+                        .parent()
+                        .data('course') >
+                        $(b)
+                            .parent()
+                            .data('course')
+                        ? 1
+                        : -1;
+                });
             }
 
-            // get the corresponding rows of the sorted column items
-            var sortedCourseRows = $(items).map(function(i, item) {
-                return $(item)
-                    .parent()
-                    .get();
+            var sortedRows = $items.map(function(i, item) {
+                return $(item).parent()[0];
             });
 
-            // rerender the rows
-            $('#courseListTable tbody tr')
-                .not('tr:last')
-                .remove();
-            $('#courseListTable tbody #totalCreditsTr').before(
-                sortedCourseRows,
-            );
+            $('#courseListTable tbody tr').remove();
+            $('#courseListTable tbody').append(sortedRows);
         });
 
     // Reset current table not all tables
@@ -735,83 +722,75 @@ function insertCourseToCourseListTable(
     credits,
     isProject,
 ) {
-    var $trElement = $(
-        '<tr data-course="' +
-            'course' +
-            courseId +
-            '" data-is-project="' +
-            isProject +
-            '">' +
-            '<td>' +
-            slotArray.join('+') +
-            '</td>' +
-            '<td>' +
-            courseCode +
-            '</td>' +
-            '<td>' +
-            courseTitle +
-            '</td>' +
-            '<td>' +
-            faculty +
-            '</td>' +
-            '<td>' +
-            venue +
-            '</td>' +
-            '<td>' +
-            credits +
-            '</td>' +
-            '<td><i class="fas fa-times close"></i></td>' +
-            '</tr>',
+    var $courseListItem = $(
+        `<tr
+            data-course="course${courseId}"
+            data-is-project="${isProject}"
+        >
+            <td>${slotArray.join('+')}</td>
+            <td>${courseCode}</td>
+            <td>${courseTitle}</td>
+            <td>${faculty}</td>
+            <td>${venue}</td>
+            <td>${credits}</td>
+            <td><i class="fas fa-times close"></i></td>
+        </tr>`,
     );
 
-    var previousRow = $('#courseListTable tbody #totalCreditsTr');
-    var sortedColumn = $('#courseListTable th.sorted')[0];
+    var nextRow = null;
+    var sortedColumn =
+        $('#courseListTable th.ascending')[0] ||
+        $('#courseListTable th.descending')[0];
+    var isAscending = $('#courseListTable th.ascending')[0] != undefined;
 
-    // if any column is sorted, find the position of this course
-    if (sortedColumn) {
+    /*
+        If the course list is sorted, the course should be
+        inserted at the appropriate position
+     */
+    if (sortedColumn != undefined) {
         var index = getColumnIndex(sortedColumn);
-        var items = retrieveColumnItems(sortedColumn);
-        var currentElement = $trElement.find('td')[index];
+        var $items = retrieveColumnItems($(sortedColumn));
+        var currentItem = $courseListItem.find('td')[index];
 
-        // a variation of insertion sort
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
+        for (var i = 0; i < $items.length; i++) {
+            var item = $items[i];
 
-            if ($(currentElement).text() <= $(item).text()) {
-                previousRow = $(item).parent();
-                break;
+            if (isAscending) {
+                if ($(currentItem).text() <= $(item).text()) {
+                    nextRow = $(item).parent();
+                    break;
+                }
+            } else {
+                if ($(currentItem).text() >= $(item).text()) {
+                    nextRow = $(item).parent();
+                    break;
+                }
             }
         }
     }
 
-    previousRow.before($trElement);
+    if (nextRow === null) {
+        $('#courseListTable tbody').append($courseListItem);
+    } else {
+        nextRow.before($courseListItem);
+    }
 
-    // update credits
     updateCredits();
 }
 
 function getColumnIndex(column) {
-    var columns = [
-        'Slot',
-        'Course Code',
-        'Course Title',
-        'Faculty',
-        'Venue',
-        'Credits',
-    ];
-    var columnText = $(column).text();
-    var index = columns.indexOf(columnText);
+    var columns = Array.from($('#courseListTable th'), function(el) {
+        return el.innerText;
+    });
 
-    return index;
+    return columns.indexOf(column.innerText || column);
 }
 
-function retrieveColumnItems(column) {
-    var index = getColumnIndex(column);
+function retrieveColumnItems($column) {
+    var index = getColumnIndex($column.text());
+    var $rows = $('#courseListTable tbody tr');
 
-    var courseRows = $('#courseListTable tbody').find('tr');
-    courseRows = courseRows.slice(0, -1);
-
-    var items = $(courseRows).map(function(i, row) {
+    var items = $rows.map(function(i, row) {
         return $(row).find('td')[index];
     });
 
@@ -820,18 +799,16 @@ function retrieveColumnItems(column) {
 
 function updateCredits() {
     var totalCredits = 0;
-    $('#courseListTable tbody tr')
-        .not('#totalCreditsTr')
-        .each(function() {
-            // 6th column is credits column
-            totalCredits += Number(
-                $(this)
-                    .children('td')
-                    .eq(5)
-                    .text(),
-            );
-        });
-    $('#totalCredits').text(totalCredits);
+    $('#courseListTable tbody tr').each(function() {
+        // 6th column is credits column
+        totalCredits += Number(
+            $(this)
+                .children('td')
+                .eq(5)
+                .text(),
+        );
+    });
+    $('#total-credits').text(totalCredits);
 }
 
 function checkSlotClash() {
