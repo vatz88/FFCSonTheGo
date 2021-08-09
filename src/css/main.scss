@@ -68,6 +68,7 @@ nav {
     outline: none !important;
     box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
 }
+
 .bootstrap-select button.dropdown-toggle {
     border-color: #ccc !important;
     border-radius: 4px !important;
@@ -78,6 +79,10 @@ nav {
     &:not(.disabled) {
         background-color: #fff;
     }
+}
+
+.bootstrap-select .btn-block {
+    width: 100%;
 }
 
 #insertCourseSelectionOptions {
