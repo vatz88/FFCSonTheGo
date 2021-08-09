@@ -81,43 +81,48 @@ export function postInitAutocomplete() {
         $(this).blur();
     });
 
-    // Initalize the slot filter
-    $('#filter-by-slot').on('changed.bs.select', function(
-        e,
-        clickedIndex,
-        isSelected,
-        previousValue,
-    ) {
+    /*
+        Event to listen to changes in the slot filter
+     */
+    $('#filter-by-slot').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
+        // If Select All / Deselect All is clicked, isSelected will be null
+        if (isSelected === null) {
+            $('#insertCourseSelectionOptions button').show();
+            return;
+        }
+
+        // If the current state has no selected items, show everything
+        if (previousValue.length === 1 && !isSelected) {
+            $('#insertCourseSelectionOptions button').show();
+            return;
+        }
+
         var option = $('option', this)[clickedIndex].value;
-        var filterIndex = filterSlotArr.indexOf(option);
 
         if (isSelected) {
-            if (filterIndex == -1) {
-                filterSlotArr.push(option);
+            // If the previous state had nothing selected, hide everything
+            if (previousValue.length === 0) {
+                $('#insertCourseSelectionOptions button').hide();
             }
+
+            $('#insertCourseSelectionOptions button:not(:visible)').each(function() {
+                if ($(this).data('slot') === option) {
+                    $(this).show();
+                }
+            });
         } else {
-            if (filterIndex != -1) {
-                filterSlotArr.splice(filterIndex, 1);
-            }
+            $('#insertCourseSelectionOptions button:visible').each(function() {
+                if ($(this).data('slot') === option) {
+                    $(this).hide();
+                }
+            });
         }
 
-        // Show all the slots first, then hide whatever is not in filterSlotArr
-        $('#insertCourseSelectionOptions button').show();
-        if (filterSlotArr.length) {
-            $('#insertCourseSelectionOptions button')
-                .not(function(i, el) {
-                    var elSlot = $(el).data('slot');
-
-                    if (filterSlotArr.indexOf(elSlot) != -1) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                })
-                .hide();
+        if ($('#insertCourseSelectionOptions button.selected:not(:visible)').length > 0) {
+            $('#insertCourseSelectionOptions button.selected').removeClass('selected');
+            $('#slot-sel-area-toggle-fields input').val('');
         }
     });
-    $('#filter-by-slot').selectpicker('refresh');
 
     // Hack to turn off auto focus
     $('#filter-by-slot').on('change', function() {
