@@ -1,10 +1,5 @@
 import $ from 'jquery';
 
-export let filterSlotArr = [];
-export function resetFilterSlotArr(params) {
-    filterSlotArr = [];
-}
-
 const courses_data = {
     unique_courses: [],
     all_data: [],
@@ -169,8 +164,6 @@ function getSlotSelectionButton(
 export function addSlotButtons(code) {
     $('#insertCourseSelectionOptions').html('');
     $('#filter-by-slot').html('');
-
-    resetFilterSlotArr();
 
     var theorySlotGroupSelect = [];
     var labSlotGroupSelect = [];
