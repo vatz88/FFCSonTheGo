@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import localforage from 'localforage';
 import html2canvas from 'html2canvas';
-import { resetFilterSlotArr, addSlotButtons } from './autocomplete_course';
+import { addSlotButtons } from './autocomplete_course';
 
 let timeTableStorage = [
     {
@@ -504,7 +504,6 @@ $(function() {
         highlighted[activeTable.id] = [];
         // Clear Multiselect
         $('#filter-by-slot').html('');
-        resetFilterSlotArr();
         $('#filter-by-slot').prop('disabled', true) &&
             $('#filter-by-slot').selectpicker &&
             $('#filter-by-slot').selectpicker('refresh');
@@ -516,7 +515,6 @@ $(function() {
         $('#insertCourseSelectionOptions').html('');
         // Clear Multiselect
         $('#filter-by-slot').html('');
-        resetFilterSlotArr();
         $('#filter-by-slot').prop('disabled', true) &&
             $('#filter-by-slot').selectpicker &&
             $('#filter-by-slot').selectpicker('refresh');
