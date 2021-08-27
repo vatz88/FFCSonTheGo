@@ -1,0 +1,113 @@
+#inputCourse {
+    box-shadow: none;
+}
+
+#inputCourse:focus,
+.bootstrap-select button.dropdown-toggle:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe !important;
+    outline: none !important;
+    box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);
+}
+.bootstrap-select button.dropdown-toggle {
+    border-color: #ccc !important;
+    border-radius: 4px !important;
+    border-style: solid !important;
+    border-width: 1px !important;
+    margin-bottom: 0.3rem;
+
+    &:not(.disabled) {
+        background-color: #fff;
+    }
+}
+
+#insertCourseSelectionOptions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    flex-wrap: wrap;
+    /* Values taken from bootstrap */
+    padding-right: calc(var(--bs-gutter-x) * 0.5 - 5px);
+    padding-left: calc(var(--bs-gutter-x) * 0.5 - 5px);
+}
+
+.list-group-item {
+    border-width: 1px !important;
+    background: none;
+    border-color: #9c27b0;
+    border-radius: 0.5rem !important;
+    margin: 5px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.list-group-item:hover {
+    background: #f8ceff;
+    border-color: #f8cef8;
+}
+
+.list-group-item.selected {
+    background: #f8ceff;
+    border-color: #f8cef8;
+}
+
+.list-group-item-heading {
+    word-break: break-all;
+    margin: 5px 0;
+}
+
+.list-group-item-text {
+    margin: 5px 0;
+}
+
+#slot-sel-area-toggle-fields {
+    margin: 1rem;
+}
+
+#saved-tt-picker {
+    a {
+        color: #000000;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: #000000;
+    }
+}
+
+#saved-tt-picker-label {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tt-picker-label {
+    padding-right: 1.2rem;
+    width: 100%;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.tt-picker-edit,
+.tt-picker-remove {
+    padding-left: 0.5rem;
+}
+
+.tt-picker-edit-input {
+    /* Margin same as bootstrap padding default for .dropdown-menu > li > a */
+    margin: 3px 20px;
+}
+
+#toggleClickToSelect {
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+}
+#insertSlotBtn:empty {
+    margin-bottom: 0;
+}
+
+#courseList .row {
+    margin-right: 0;
+    margin-left: 0;
+}
