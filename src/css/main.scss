@@ -7,55 +7,6 @@ body {
     padding-top: 6rem;
 }
 
-nav {
-    box-shadow: 0 2px 5px #c2c6cc;
-}
-
-.navbar-brand {
-    color: #9c27b0 !important;
-    font-weight: bold;
-}
-
-.nav-btn-outline {
-    color: #9c27b0;
-    border-color: #9c27b0;
-    border-width: 2px;
-}
-
-.nav-btn-outline:hover {
-    color: #ffffff;
-    border-color: #9c27b0 !important;
-    background-color: #9c27b0 !important;
-}
-
-.nav-btn-outline:active,
-.nav-btn-outline:focus,
-.nav-btn-outline.show {
-    color: #ffffff;
-    border-color: #812092 !important;
-    background-color: #812092 !important;
-}
-
-.nav-link i {
-    font-size: 1.5rem;
-    margin-right: 0.3rem;
-}
-
-.nav-link small {
-    line-height: 100%;
-    vertical-align: text-top;
-}
-
-.nav-link i,
-.nav-link small {
-    color: #9c27b0;
-}
-
-.nav-link i:hover,
-.nav-link small:hover {
-    color: #812092;
-}
-
 #inputCourse {
     box-shadow: none;
 }

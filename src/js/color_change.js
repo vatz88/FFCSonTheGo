@@ -2,6 +2,10 @@ import $ from 'jquery';
 import localforage from 'localforage';
 import html2canvas from 'html2canvas';
 import { resetFilterSlotArr, addSlotButtons } from './autocomplete_course';
+import {addCourseToTimetable} from './timeTable/addCourse';
+import {updateCredits} from './courseListTable/updateCredits';
+import {checkSlotClash} from './courseListTable/checkClash';
+
 
 let timeTableStorage = [
     {
@@ -694,37 +698,8 @@ function addColorChangeEvents() {
     });
 }
 
-function addCourseToTimetable(
-    courseId,
-    courseCode,
-    venue,
-    slotArray,
-    isProject,
-) {
-    slotArray.forEach(function(slot) {
-        var $divElement = $(
-            '<div data-course="' +
-                'course' +
-                courseId +
-                '" data-is-lab="' +
-                (slot[0] === 'L') +
-                '" data-is-project="' +
-                isProject +
-                '">' +
-                courseCode +
-                '-' +
-                venue +
-                '</div>',
-        );
-        $('#timetable tr .' + slot)
-            .addClass('highlight')
-            .append($divElement);
-        if ($('.quick-selection .' + slot + '-tile')) {
-            $('.quick-selection .' + slot + '-tile').addClass('highlight');
-        }
-    });
-}
 
+/* Should be in the courseListTable Folder, However, It's not working, in that case */
 function insertCourseToCourseListTable(
     courseId,
     courseCode,
@@ -818,124 +793,6 @@ function retrieveColumnItems(column) {
     return items;
 }
 
-function updateCredits() {
-    var totalCredits = 0;
-    $('#courseListTable tbody tr')
-        .not('#totalCreditsTr')
-        .each(function() {
-            // 6th column is credits column
-            totalCredits += Number(
-                $(this)
-                    .children('td')
-                    .eq(5)
-                    .text(),
-            );
-        });
-    $('#totalCredits').text(totalCredits);
-}
-
-function checkSlotClash() {
-    // Remove table-danger class (shows clashing) form tr in course list table.
-    $('#courseListTable tbody tr').removeClass('table-danger');
-    $('#timetable tr .hidden').removeClass('hidden');
-
-    // Check clash from timetable in each slot area
-    $('#timetable tr .highlight').each(function() {
-        var $highlightedCell = $(this);
-        var $highlightedCellDivs = $(this).children('div[data-course]');
-
-        var noPostLabFlag =
-            $(this).hasClass('noPostLab') &&
-            $(this).children('div[data-is-lab="false"]').length > 0 &&
-            $(this)
-                .next()
-                .children('div[data-is-lab="true"]').length > 0;
-        var noPreTheoryFlag =
-            $(this).hasClass('noPreTheory') &&
-            $(this).children('div[data-is-lab="true"]').length > 0 &&
-            $(this)
-                .prev()
-                .children('div[data-is-lab="false"]').length > 0;
-
-        if (
-            $highlightedCellDivs.length > 1 ||
-            noPostLabFlag ||
-            noPreTheoryFlag
-        ) {
-            var isClashing = true;
-
-            // Check if there are two dissimilar courses or if there is a J
-            // component course and a sibling in this cell.
-            if ($highlightedCellDivs.length === 2) {
-                var $firstCellDiv = $highlightedCellDivs.eq(0),
-                    $secondCellDiv = $highlightedCellDivs.eq(1);
-
-                var isFirstCourseJComp = $firstCellDiv.data('is-project'),
-                    isSecondCourseJComp = $secondCellDiv.data('is-project');
-
-                if (isFirstCourseJComp && isSecondCourseJComp) {
-                } // Two J components in the same slot is a clash.
-                else if (isFirstCourseJComp || isSecondCourseJComp) {
-                    // Otherwise, check for similarity.
-                    var firstCourseId = +$firstCellDiv
-                        .data('course')
-                        .split(/(\d+)/)[1];
-                    var secondCourseId = +$secondCellDiv
-                        .data('course')
-                        .split(/(\d+)/)[1];
-
-                    var firstCourseIdx = getIndexByCourseId(firstCourseId);
-                    var secondCourseIdx = getIndexByCourseId(secondCourseId);
-
-                    var firstCourse = activeTable.data[firstCourseIdx];
-                    var secondCourse = activeTable.data[secondCourseIdx];
-
-                    // Check to see if two courses are similar.
-                    if (
-                        firstCourse[1] === secondCourse[1] && // Course Code
-                        firstCourse[2] === secondCourse[2] // Course Title
-                    ) {
-                        $highlightedCell.removeClass('clash');
-                        var $projectDiv = isFirstCourseJComp
-                            ? $firstCellDiv
-                            : $secondCellDiv;
-                        $projectDiv.addClass('hidden');
-                        isClashing = false;
-                    }
-                }
-            }
-
-            if (isClashing) {
-                // clash
-                // remove, add clash in timetable
-                $(this).addClass('clash');
-                // show clash in course list table
-                $(this)
-                    .children('div[data-course]')
-                    .each(function() {
-                        var dataCourse = $(this).attr('data-course');
-                        // Add table-danger class to tr of clashing course list table.
-                        $(
-                            '#courseListTable tbody tr[data-course="' +
-                                dataCourse +
-                                '"]',
-                        ).addClass('table-danger');
-                    });
-            }
-        } else if ($highlightedCellDivs.length === 1) {
-            // no clash
-            $(this)
-                .removeClass('clash')
-                .addClass('highlight');
-        } else {
-            // no course present
-            $(this).removeClass('clash highlight');
-            $('.quick-selection .' + this.classList[1] + '-tile').removeClass(
-                'highlight',
-            );
-        }
-    });
-}
 
 function removeCourse(e) {
     e.stopPropagation();
@@ -960,26 +817,9 @@ function removeCourse(e) {
     updateLocalForage();
 }
 
-function getIndexByCourseId(courseId) {
-    return activeTable.data.findIndex(function(elem) {
-        return elem[0] === courseId;
-    });
-}
+//Removing function getIndexByCourseId
 
-// Simply clears all the added content in the page but doesn't reset the data in memory.
-function clearPage() {
-    $('#timetable .TimetableContent').removeClass('highlight clash');
-    $('.quick-selection *[class*="-tile"]').removeClass('highlight');
-    $('#slot-sel-area input').val('');
-    if ($('#timetable tr div[data-course]')) {
-        $('#timetable tr div[data-course]').remove();
-    }
-    if ($('#courseListTable tbody tr[data-course]')) {
-        $('#courseListTable tbody tr[data-course]').remove();
-    }
-    $('#insertCourseSelectionOptions').html('');
-    updateCredits();
-}
+
 
 // Fills the page with the courses (array) passed.
 function fillPage(data) {
@@ -1023,7 +863,50 @@ function switchTable(tableId) {
     }
     highlighted.highlight(tableId);
 }
+function clearPage() {
+    $('#timetable .TimetableContent').removeClass('highlight clash');
+    $('.quick-selection *[class*="-tile"]').removeClass('highlight');
+    $('#slot-sel-area input').val('');
+    if ($('#timetable tr div[data-course]')) {
+        $('#timetable tr div[data-course]').remove();
+    }
+    if ($('#courseListTable tbody tr[data-course]')) {
+        $('#courseListTable tbody tr[data-course]').remove();
+    }
+    $('#insertCourseSelectionOptions').html('');
+    updateCredits();
+}
+function addTableDropdownButton(tableId, tableName) {
+    $('#saved-tt-picker').append(
+        '<li>' +
+            '<table class="dropdown-item">' +
+            '<td class="tt-picker-label"><a href="JavaScript:void(0);" data-table-id="' +
+            tableId +
+            '">' +
+            tableName +
+            '</a></td>' +
+            '<td>' +
+            '<a class="tt-picker-edit" href="JavaScript:void(0);" data-table-id="' +
+            tableId +
+            '" data-bs-toggle="modal" data-bs-target="#edit-modal"><i class="fas fa-edit"></i></a>' +
+            '<a class="tt-picker-remove" href="JavaScript:void(0);" data-table-id="' +
+            tableId +
+            '" data-bs-toggle="modal" data-bs-target="#delete-modal"><i class="fas fa-trash"></i></a>' +
+            '</td>' +
+            '</table>' +
+            '</li>',
+    );
 
+    if (!isDefaultDeletable) {
+        $('#saved-tt-picker .tt-picker-edit')
+            .first()
+            .after(
+                '<span class="tt-picker-remove" href="JavaScript:void(0);" data-table-id="0" data-bs-toggle="modal" data-bs-target="#delete-modal"><i class="fas fa-trash"></i></span>',
+            );
+
+        isDefaultDeletable = true;
+    }
+}
 function updateTableDropdownLabel(tableName) {
     $('#saved-tt-picker-label').text(tableName);
 }
@@ -1069,37 +952,7 @@ function renameTable(tableId, tableName) {
     }
 }
 
-function addTableDropdownButton(tableId, tableName) {
-    $('#saved-tt-picker').append(
-        '<li>' +
-            '<table class="dropdown-item">' +
-            '<td class="tt-picker-label"><a href="JavaScript:void(0);" data-table-id="' +
-            tableId +
-            '">' +
-            tableName +
-            '</a></td>' +
-            '<td>' +
-            '<a class="tt-picker-edit" href="JavaScript:void(0);" data-table-id="' +
-            tableId +
-            '" data-bs-toggle="modal" data-bs-target="#edit-modal"><i class="fas fa-edit"></i></a>' +
-            '<a class="tt-picker-remove" href="JavaScript:void(0);" data-table-id="' +
-            tableId +
-            '" data-bs-toggle="modal" data-bs-target="#delete-modal"><i class="fas fa-trash"></i></a>' +
-            '</td>' +
-            '</table>' +
-            '</li>',
-    );
 
-    if (!isDefaultDeletable) {
-        $('#saved-tt-picker .tt-picker-edit')
-            .first()
-            .after(
-                '<span class="tt-picker-remove" href="JavaScript:void(0);" data-table-id="0" data-bs-toggle="modal" data-bs-target="#delete-modal"><i class="fas fa-trash"></i></span>',
-            );
-
-        isDefaultDeletable = true;
-    }
-}
 
 // save data through localForage
 function updateLocalForage() {
