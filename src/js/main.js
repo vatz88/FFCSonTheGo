@@ -1,6 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../css/main.scss';
+import '../css/navBar.scss'
+import '../css/coursePanel.scss';
+import '../css/table.scss';
 
 import $ from 'jquery';
 import 'bootstrap';
@@ -69,6 +72,15 @@ window.addEventListener('beforeinstallprompt', (e) => {
         });
     });
 });
+let shareData = {
+    title: 'FFCS On The Go',
+    text: 'FFCS made hassle free!',
+    url: 'https://ffcsonthego.vatz88.in',
+  }
+  const btn = document.getElementById('shareOther');
+  btn.addEventListener('click', () => {
+    navigator.share(shareData)
+  });
 
 // const Sentry = require('@sentry/browser');
 // Sentry.init({
