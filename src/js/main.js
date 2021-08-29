@@ -72,6 +72,15 @@ window.addEventListener('beforeinstallprompt', (e) => {
         });
     });
 });
+let shareData = {
+    title: 'FFCS On The Go',
+    text: 'FFCS made hassle free!',
+    url: 'https://ffcsonthego.vatz88.in',
+  }
+  const btn = document.getElementById('shareOther');
+  btn.addEventListener('click', () => {
+    navigator.share(shareData)
+  });
 
 // const Sentry = require('@sentry/browser');
 // Sentry.init({
