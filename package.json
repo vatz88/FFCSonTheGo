@@ -22,9 +22,6 @@
             "pre-commit": "pretty-quick --staged"
         }
     },
-    "engines": {
-        "node": ">=10 <13"
-    },
     "devDependencies": {
         "husky": "^2.4.1",
         "parcel-bundler": "^1.12.3",
