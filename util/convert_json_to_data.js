@@ -27,6 +27,15 @@ fs.writeFile(
     () => console.log('Updated all_data_chennai.json'),
 );
 
+const outputAp = fs.readFileSync(path.resolve(__dirname + '/output_ap.json'));
+const outputObjectAp = JSON.parse(outputAp);
+
+fs.writeFile(
+    __dirname + '/../src/data/all_data_ap.json',
+    JSON.stringify(outputObjectAp),
+    () => console.log('Updated all_data_ap.json'),
+);
+
 // Remove repetitive courses
 const uniqueCourses = (outputObject) =>
     outputObject.filter(
@@ -46,4 +55,10 @@ fs.writeFile(
     path.resolve(__dirname + '/../src/data/courses_chennai.json'),
     JSON.stringify(uniqueCourses(outputObjectChennai)),
     () => console.log('Updated courses_chennai.json'),
+);
+
+fs.writeFile(
+    path.resolve(__dirname + '/../src/data/courses_ap.json'),
+    JSON.stringify(uniqueCourses(outputObjectAp)),
+    () => console.log('Updated courses_ap.json'),
 );
