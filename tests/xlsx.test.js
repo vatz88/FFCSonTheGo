@@ -36,12 +36,12 @@ describe('does xlsx have the right headers', () => {
     });
 
     test('chennai', () => {
-        const missingHeaders = getMissingColumnHeaders('report_vellore.xlsx');
+        const missingHeaders = getMissingColumnHeaders('report_chennai.xlsx');
         expect(missingHeaders).toStrictEqual([]);
     });
 
     test('ap', () => {
-        const missingHeaders = getMissingColumnHeaders('report_vellore.xlsx');
+        const missingHeaders = getMissingColumnHeaders('report_ap.xlsx');
         expect(missingHeaders).toStrictEqual([]);
     });
 });
