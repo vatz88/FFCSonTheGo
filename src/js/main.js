@@ -56,8 +56,8 @@ window.switchCampus = () => {
     if (window.location.hash.toLowerCase() === '#ap') {
         $('#campus').text('AP Campus');
         $('#last-update').text(lastUpdate.ap);
-        window.location.hash = '#Ap';
-        window.campus = 'Ap';
+        window.location.hash = '#AP';
+        window.campus = 'AP';
     } else if (window.location.hash.toLowerCase() === '#chennai') {
         $('#campus').text('Chennai Campus');
         $('#last-update').text(lastUpdate.chennai);

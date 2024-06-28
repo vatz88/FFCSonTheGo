@@ -208,7 +208,7 @@ const courses_data = {
     Function to get the courses based on the selected campus
  */
 window.getCourses = () => {
-    if (window.campus == 'Ap') {
+    if (window.campus == 'AP') {
         courses_data.all_data = require('../data/all_data_ap.json');
         courses_data.courses = require('../data/courses_ap.json');
     } else if (window.campus == 'Chennai') {
