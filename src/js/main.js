@@ -53,7 +53,12 @@ $(function () {
     Function to switch campuses
  */
 window.switchCampus = () => {
-    if (window.location.hash.toLowerCase() === '#chennai') {
+    if (window.location.hash.toLowerCase() === '#ap') {
+        $('#campus').text('AP Campus');
+        $('#last-update').text(lastUpdate.ap);
+        window.location.hash = '#AP';
+        window.campus = 'AP';
+    } else if (window.location.hash.toLowerCase() === '#chennai') {
         $('#campus').text('Chennai Campus');
         $('#last-update').text(lastUpdate.chennai);
         window.location.hash = '#Chennai';

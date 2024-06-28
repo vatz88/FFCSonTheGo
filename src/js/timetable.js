@@ -654,7 +654,9 @@ window.initializeTimetable = () => {
     $('#timetable tr').slice(2).hide();
     $('#timetable tr td:not(:first-child)').remove();
 
-    if (window.campus == 'Chennai') {
+    if (window.campus == 'AP') {
+        timetable = require('../schemas/ap.json');
+    } else if (window.campus == 'Chennai') {
         timetable = require('../schemas/chennai.json');
     } else {
         timetable = require('../schemas/vellore.json');
