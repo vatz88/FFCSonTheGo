@@ -27,12 +27,12 @@ fs.writeFile(
     () => console.log('Updated all_data_chennai.json'),
 );
 
-const outputAp = fs.readFileSync(path.resolve(__dirname + '/output_ap.json'));
-const outputObjectAp = JSON.parse(outputAp);
+const outputAP = fs.readFileSync(path.resolve(__dirname + '/output_ap.json'));
+const outputObjectAP = JSON.parse(outputAP);
 
 fs.writeFile(
     __dirname + '/../src/data/all_data_ap.json',
-    JSON.stringify(outputObjectAp),
+    JSON.stringify(outputObjectAP),
     () => console.log('Updated all_data_ap.json'),
 );
 
@@ -59,6 +59,6 @@ fs.writeFile(
 
 fs.writeFile(
     path.resolve(__dirname + '/../src/data/courses_ap.json'),
-    JSON.stringify(uniqueCourses(outputObjectAp)),
+    JSON.stringify(uniqueCourses(outputObjectAP)),
     () => console.log('Updated courses_ap.json'),
 );
