@@ -1,4 +1,4 @@
-# Contributing to FFCS On The Go - VIT University
+# Contributing to FFCS On The Go
 
 Thank you for considering contributing to FFCS On The Go - VIT University! Whether you're a seasoned developer or new to open-source, we appreciate your involvement.
 
@@ -83,6 +83,10 @@ Ensure you have the following installed:
 -   Use **camelCase** for variable and function names (e.g., `getUserName`, `fetchData`).
 -   Use **PascalCase** for component and class names (e.g., `UserProfile`, `DataFetcher`).
 
+### DOM Element Class Names and IDs
+
+-   Use **hyphens** to separate words (e.g., `user-profile`, `main-header`).
+
 ### Commits and Pull Requests
 
 -   Write **clear and concise commit messages**.
@@ -128,4 +132,4 @@ Ensure you have the following installed:
 -   Remove all unused code.
 -   Do not leave commented-out code in the codebase unless it is necessary to keep for future reference.
 
-By following these guidelines, you'll help keep our project consistent and maintainable. If you have any questions, don't hesitate to ask for help in the issue tracker or discussions. Happy coding!
+By following these guidelines, you'll help keep our project consistent and maintainable.
