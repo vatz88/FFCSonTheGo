@@ -13,14 +13,9 @@ The `convert_xlsx_to_json.js` script converts an Excel file to JSON format. The 
 ### Requirements
 
 The Excel sheet should contain the following column headers (case sensitive):
-Certainly! Here's a table format for the specified columns:
-
-Sure, here's the table formatted as requested:
 
 | CODE | TITLE | TYPE | CREDITS | SLOT | FACULTY | VENUE |
 | ---- | ----- | ---- | ------- | ---- | ------- | ----- |
-
-You can fill in the rows with the relevant data. If you need the table in a specific format or file type, please let me know!
 
 ### Instructions
 
@@ -29,7 +24,7 @@ You can fill in the rows with the relevant data. If you need the table in a spec
 
 ### Note
 
-The scripts may need modifications based on the data in the report.
+Both of these scripts can be executed using the command `yarn run convert`.
 
 ### Additional Tools
 
