@@ -7,12 +7,12 @@ The `convert_xlsx_to_json.js` script converts an Excel file to JSON format. The 
 ### Usage
 
 -   The scripts modify `data/all_data.json` as per the new Excel data.
--   Ensure the Excel file is named in the format `report_<campus>.xlsx`.
--   The sheet name must be `Sheet 1`.
 
 ### Requirements
 
-The Excel sheet should contain the following column headers (case sensitive):
+-   Ensure the Excel file is named in the format `report_<campus>.xlsx`.
+-   The sheet name must be `Sheet 1`.
+    The Excel sheet should contain the following column headers (case sensitive):
 
 | CODE | TITLE | TYPE | CREDITS | SLOT | FACULTY | VENUE |
 | ---- | ----- | ---- | ------- | ---- | ------- | ----- |
