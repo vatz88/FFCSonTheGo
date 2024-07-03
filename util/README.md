@@ -22,9 +22,8 @@ The Excel sheet should contain the following column headers (case sensitive):
 1. Use the `convert_xlsx_to_json.js` script to convert the Excel file to JSON.
 2. Use the `convert_json_to_data.js` script to transform the JSON data into the required format.
 
-### Note
-
-Both of these scripts can be executed using the command `yarn run convert`.
+> [!NOTE]
+> Both of these scripts can be executed using the command `yarn run convert`.
 
 ### Additional Tools
 
