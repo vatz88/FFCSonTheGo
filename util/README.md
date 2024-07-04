@@ -1,38 +1,30 @@
-# Convert Excel sheet to JSON
+## Convert Excel Sheet to JSON
 
-## Usage
+### Overview
 
-`convert_xlsx_to_json.js` is used to convert excel to JSON.
-`convert_json_to_data.js` has the transformation code to adhere to the required JSON format.
+The `convert_xlsx_to_json.js` script converts an Excel file to JSON format. The `convert_json_to_data.js` script transforms the JSON data to adhere to the required format.
 
-_`data/all_data.json` and `data/all_data.json` will be modified as per the new excel_
+### Requirements
 
-### Note
+-   Ensure the Excel file is named in the format `report_<campus>.xlsx`.
+-   The sheet name must be `Sheet 1`.
+-   The Excel sheet should contain the following column headers (case sensitive):
 
--   Make sure excel file name is `report_<campus>.xlsx`
+    | CODE | TITLE | TYPE | CREDITS | SLOT | FACULTY | VENUE |
+    | ---- | ----- | ---- | ------- | ---- | ------- | ----- |
 
--   The sheet name in the file MUST be `Sheet 1`
+### Instructions
 
--   Excel sheet should ONLY have the following columns headers (case sensitive):
+1. Use the `convert_xlsx_to_json.js` script to convert the Excel file to JSON.
+2. Use the `convert_json_to_data.js` script to transform the JSON data into the required format.
 
-    **CODE**
+> [!TIP]
+> Both of these scripts can be executed using the command `yarn run convert`.
 
-    **TITLE**
+### Additional Tools
 
-    **TYPE**
+- For converting a PDF file to Excel, use [ilovepdf.com](https://www.ilovepdf.com/pdf_to_excel).
 
-    **VENUE**
+### To-Do
 
-    **FACULTY**
-
-    **CREDITS**
-
-    **SLOT**
-
--   The scipt may need to be modified depending upon the data in `report`.
-
--   Use https://simplypdf.com/Excel to convert PDF to Excel.
-
-## TODO
-
-[ ] Add script to automate PDF -> XLSX conversion (could change cos, VIT ¯\\\_(ツ)\_/¯)
+-   [ ] Add a script to automate the PDF to XLSX conversion (note: this process might change depending on VIT's requirements).
