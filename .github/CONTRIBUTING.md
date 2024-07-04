@@ -17,8 +17,8 @@ To get started with contributing, you need to set up the application on your loc
 
 Ensure you have the following installed:
 
--   [Git](https://git-scm.com/)
--   [Node.js and yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable)
+-   [Git](https://git-scm.com/downloads)
+-   [Node.js and yarn](https://classic.yarnpkg.com/lang/en/docs/install)
 
 ### Steps
 
