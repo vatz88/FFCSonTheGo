@@ -7,8 +7,9 @@ $(() => {
     /*
         Click event to sort the course list
      */
-    $('#course-list th:not(:last)').on('click', function() {
-        var isAscending = (isDescending = false);
+    $('#course-list th:not(:last)').on('click', function () {
+        var isAscending = false,
+            isDescending = false;
         var $items = retrieveColumnItems($(this));
 
         if ($(this).hasClass('ascending')) {
@@ -21,31 +22,27 @@ $(() => {
 
         // Sort the course list in ascending, descending or the default order
         if (!isAscending && !isDescending) {
-            $items.sort(function(a, b) {
+            $items.sort(function (a, b) {
                 return $(a).text() > $(b).text() ? 1 : -1;
             });
 
             $(this).addClass('ascending');
         } else if (isAscending && !isDescending) {
-            $items.sort(function(a, b) {
+            $items.sort(function (a, b) {
                 return $(a).text() < $(b).text() ? 1 : -1;
             });
 
             $(this).addClass('descending');
         } else {
-            $items.sort(function(a, b) {
-                return $(a)
-                    .parent()
-                    .data('course') >
-                    $(b)
-                        .parent()
-                        .data('course')
+            $items.sort(function (a, b) {
+                return $(a).parent().data('course') >
+                    $(b).parent().data('course')
                     ? 1
                     : -1;
             });
         }
 
-        var sortedRows = $items.map(function(i, item) {
+        var sortedRows = $items.map(function (i, item) {
             return $(item).parent()[0];
         });
 
@@ -56,10 +53,8 @@ $(() => {
     /*
         Click event to delete a course from the course list
      */
-    $('#course-list').on('click', '.close', function() {
-        var course = $(this)
-            .closest('tr')
-            .attr('data-course');
+    $('#course-list').on('click', '.close', function () {
+        var course = $(this).closest('tr').attr('data-course');
 
         removeCourseFromCourseList(course);
         removeCourseFromTimetable(course);
@@ -76,7 +71,7 @@ $(() => {
     /*
         Double click event to add a course beck to the panel
      */
-    $('#course-list').on('dblclick', 'tbody tr', function(e) {
+    $('#course-list').on('dblclick', 'tbody tr', function (e) {
         var slotString = $(this)
             .find('td')
             .not('[colspan]')
@@ -90,18 +85,9 @@ $(() => {
             .find('td')
             .eq(getColumnIndex('Course Title'))
             .text();
-        var faculty = $(this)
-            .find('td')
-            .eq(getColumnIndex('Faculty'))
-            .text();
-        var venue = $(this)
-            .find('td')
-            .eq(getColumnIndex('Venue'))
-            .text();
-        var credits = $(this)
-            .find('td')
-            .eq(getColumnIndex('Credits'))
-            .text();
+        var faculty = $(this).find('td').eq(getColumnIndex('Faculty')).text();
+        var venue = $(this).find('td').eq(getColumnIndex('Venue')).text();
+        var credits = $(this).find('td').eq(getColumnIndex('Credits')).text();
 
         $('#course-input').val(courseCode + ' - ' + courseTitle);
         $('#faculty-input').val(faculty);
@@ -118,9 +104,7 @@ $(() => {
             })
             .promise()
             .done(() => {
-                $(this)
-                    .find('.close')
-                    .trigger('click');
+                $(this).find('.close').trigger('click');
             });
     });
 });
@@ -129,7 +113,7 @@ $(() => {
     Function to get a columns index from the course list
  */
 function getColumnIndex(column) {
-    var columns = Array.from($('#course-list th'), function(el) {
+    var columns = Array.from($('#course-list th'), function (el) {
         return el.innerText;
     });
 
@@ -144,7 +128,7 @@ function retrieveColumnItems($column) {
 
     var $rows = $('#course-list tbody tr');
 
-    var items = $rows.map(function(i, row) {
+    var items = $rows.map(function (i, row) {
         return $(row).find('td')[index];
     });
 
@@ -157,12 +141,9 @@ function retrieveColumnItems($column) {
 function updateCredits() {
     var totalCredits = 0;
 
-    $('#course-list tbody tr').each(function() {
+    $('#course-list tbody tr').each(function () {
         totalCredits += Number(
-            $(this)
-                .children('td')
-                .eq(getColumnIndex('Credits'))
-                .text(),
+            $(this).children('td').eq(getColumnIndex('Credits')).text(),
         );
     });
 
