@@ -30,7 +30,7 @@
         "@parcel/transformer-sass": "2.10.1",
         "@parcel/transformer-webmanifest": "2.10.1",
         "@popperjs/core": "^2.11.8",
-        "@sentry/browser": "^7.76.0",
+        "@sentry/browser": "^7.119.1",
         "bootstrap": "^5.3.2",
         "bootstrap-select": "^1.13.18",
         "bootstrap4": "npm:bootstrap@4.6.0",
