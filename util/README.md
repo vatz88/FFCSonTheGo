@@ -21,19 +21,23 @@ The `convert_xlsx_to_json.js` script converts an Excel file to JSON format. The 
 > [!TIP]
 > Both of these scripts can be executed using the command `yarn run convert`.
 
-### Vellore third-year course additions
+### Vellore third-year course allocations
 
-`report_vellore.xlsx` includes the courses from `3rd Year Course List_FINAL.xlsx`.
-The 56 source rows produce 28 distinct slot options across 10 courses, including
-new slots for the existing Human Computer Interaction course. Existing entries
-are retained. Repeated rows with identical available details are included once.
+The courses initially supplied in `3rd Year Course List_FINAL.xlsx` are enriched
+with Winter Semester 2026-27 listings from [VTOP](https://vtop.vit.ac.in/vtop/content),
+Academics → Course Registration Allocation, retrieved on 27 October 2026.
+The 28 provisional slot entries are replaced with 108 verified faculty/venue
+options across 10 courses. All other existing entries are retained.
 
--   Integrated (`ETL`) courses use separate `ETH` theory and `ELA` lab entries,
-    with 2 and 1 credits respectively, totaling the source's 3 credits.
--   `F1/F2` represents two alternative slots and is stored as separate options.
--   Faculty and venue are marked `Not announced` because the source omits them.
-    Theory/lab pairings in the source are represented as separate components,
-    following the app's existing course data format.
+-   Each distinct faculty/venue/slot combination is retained, including multiple
+    offerings sharing the same slot. No faculty or venue placeholders remain.
+-   Integrated (`ETL`) courses use VTOP's separate `ETH` theory and `ELA` lab
+    entries, with 2 and 1 credits respectively, totaling 3 credits.
+-   `BSTS302P` uses the 52 VTOP allocations with type `SS` and slots `F1+TF1`
+    or `F2+TF2`. Its 1.5 credits are verified in VTOP's My Curriculum → Open
+    Elective table, replacing the original spreadsheet's 3-credit value.
+-   VTOP displays classes according to the student's applicable class options.
+    These records reflect the allocations visible in that view on the retrieval date.
 
 ### Vellore Winter Semester 2026-27 additions
 
