@@ -52,6 +52,22 @@ The user also supplied two 2-credit courses taught by `SUKANTA GHOSH`:
 -   `BCSE102P` (Structured and Object-Oriented Programming Lab), lab (`LO`):
     `L39+L40+L55+L56` in `PRP347` and `L13+L14+L27+L28` in `PRP138`.
 
+### Additional Vellore ECE and foundation allocations
+
+An additional VTOP curriculum view was checked on 27 October 2026 for Winter
+Semester 2026-27. It supplied 306 allocation records across 60 courses, covering
+foundation, engineering sciences, ECE core/elective, project, and coding courses.
+After excluding 52 already-present coding records, 254 new offerings were added.
+All 258 previously stored offerings are retained, giving 512 offerings across
+86 searchable courses.
+
+-   Faculty, venue, slot, and type come from Course Registration Allocation.
+-   Credits are verified against My Curriculum. Integrated theory uses L + T
+    credits and the lab receives the remaining course credits; the split varies
+    by course rather than assuming every integrated course has the same split.
+-   Project listings retain the source's `NIL` slot/venue and named administrative
+    unit. Identical offerings are included once.
+
 ### Additional Tools
 
 -   For converting a PDF file to Excel, use [ilovepdf.com](https://www.ilovepdf.com/pdf_to_excel).
