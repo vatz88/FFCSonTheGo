@@ -89,6 +89,12 @@ VTOP limits listings to the student's applicable class options; this refresh
 does not claim to cover every programme's allocations. Run `yarn convert` (or
 `npm run convert`) after editing the workbook to regenerate the app's JSON data.
 
+The Vellore course picker combines compatible same-faculty `ETH` and `ELA`
+allocations into one `ETL` registration. Selecting it adds both theory and lab
+slots, both venues, and the sum of the component credits. For example, Data
+Mining with PRABHANANTHA KUMAR M uses `G1+L49+L50`, `SJT712 / SJTG20`, and
+3 credits. The workbook and generated JSON retain the separate source rows.
+
 ### Additional Tools
 
 -   For converting a PDF file to Excel, use [ilovepdf.com](https://www.ilovepdf.com/pdf_to_excel).

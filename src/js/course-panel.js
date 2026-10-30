@@ -16,6 +16,8 @@ import 'easy-autocomplete/dist/jquery.easy-autocomplete';
 import 'bootstrap4/dist/js/bootstrap.bundle';
 import 'bootstrap-select/dist/js/bootstrap-select';
 
+const { combineEmbeddedOfferings } = require('./embedded-offerings');
+
 $(() => {
     /*
         Event to listen to changes in the slot filter
@@ -293,7 +295,18 @@ window.addSlotButtons = (courseCode) => {
     var theorySlotGroup = [];
     var labSlotGroup = [];
 
-    $.each(courses_data.all_data, function (key, value) {
+    const courseRows = courses_data.all_data.filter(
+        (row) => row.CODE === courseCode,
+    );
+    const options =
+        window.campus === 'Vellore'
+            ? combineEmbeddedOfferings(
+                  courseRows,
+                  require('../schemas/vellore.json'),
+              )
+            : courseRows;
+
+    $.each(options, function (key, value) {
         if (value.CODE === courseCode) {
             var $slotButton = buildSlotButton(value);
 
