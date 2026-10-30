@@ -2,7 +2,7 @@
     "name": "FFCSonTheGo",
     "version": "1.0.0",
     "lastUpdate": {
-        "vellore": "Fall Semester 2026-27",
+        "vellore": "Winter Semester 2026-27",
         "chennai": "Winter Semester 2026-27",
         "ap": "Fall Semester 2023-24"
     },
@@ -10,6 +10,7 @@
     "author": "Vatsal Joshi <vatz88@gmail.com>",
     "license": "GPL-3.0",
     "private": true,
+    "packageManager": "yarn@1.22.22",
     "scripts": {
         "start": "yarn convert && yarn start:noconvert",
         "start:noconvert": "parcel src/index.html",
@@ -20,7 +21,7 @@
         "prepare": "husky install"
     },
     "engines": {
-        "node": "^20"
+        "node": "24.x"
     },
     "browserslist": "> 0.5%, last 2 versions, not dead",
     "dependencies": {
