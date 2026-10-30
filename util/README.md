@@ -27,7 +27,7 @@ The courses initially supplied in `3rd Year Course List_FINAL.xlsx` are enriched
 with Winter Semester 2026-27 listings from [VTOP](https://vtop.vit.ac.in/vtop/content),
 Academics → Course Registration Allocation, retrieved on 27 October 2026.
 The 28 provisional slot entries are replaced with 108 verified faculty/venue
-options across 10 courses. All other existing entries are retained.
+options across 10 courses. At that stage, all other existing entries were retained.
 
 -   Each distinct faculty/venue/slot combination is retained, including multiple
     offerings sharing the same slot. No faculty or venue placeholders remain.
@@ -58,8 +58,8 @@ An additional VTOP curriculum view was checked on 27 October 2026 for Winter
 Semester 2026-27. It supplied 306 allocation records across 60 courses, covering
 foundation, engineering sciences, ECE core/elective, project, and coding courses.
 After excluding 52 already-present coding records, 254 new offerings were added.
-All 258 previously stored offerings are retained, giving 512 offerings across
-86 searchable courses.
+At that stage, all 258 previously stored offerings were retained, giving 512
+offerings across 86 searchable courses.
 
 -   Faculty, venue, slot, and type come from Course Registration Allocation.
 -   Credits are verified against My Curriculum. Integrated theory uses L + T
@@ -67,6 +67,27 @@ All 258 previously stored offerings are retained, giving 512 offerings across
     by course rather than assuming every integrated course has the same split.
 -   Project listings retain the source's `NIL` slot/venue and named administrative
     unit. Identical offerings are included once.
+
+### Vellore VTOP refresh — 30 October 2026
+
+Winter Semester 2026-27 allocations were checked again in
+[VTOP](https://vtop.vit.ac.in/vtop/content), Academics → Course Registration
+Allocation, using the IT curriculum view. All nine curriculum categories were
+checked, yielding 193 offerings across 55 courses. These replace all previously
+stored offerings for the same course codes, including changed faculty, venues,
+slots, and course types. Credits were checked against My Curriculum, including
+the separate theory/lab credit splits for integrated courses.
+
+The refresh adds Database Systems and its lab, Web Technologies and its lab,
+Discrete Mathematics and Graph Theory, four skills practice courses, and the IT
+Project - II / Internship listing. The 145 offerings from before the Winter
+2026-27 additions were removed. The 191 Winter offerings for 31 courses outside
+this curriculum view are retained from the 27 October retrieval, including ECE.
+The resulting workbook contains 384 offerings across 86 searchable courses.
+
+VTOP limits listings to the student's applicable class options; this refresh
+does not claim to cover every programme's allocations. Run `yarn convert` (or
+`npm run convert`) after editing the workbook to regenerate the app's JSON data.
 
 ### Additional Tools
 
